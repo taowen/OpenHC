@@ -438,6 +438,12 @@ class ReceiverSession internal constructor(
         return session { out -> handleDmsdp(call(SessionLayer.DMSDP) { layer.sendAudioFocus(change) }, out) }
     }
 
+    fun sendDeviceData(module: Long, type: Int, data: ByteArray): List<SessionOutput> {
+        if (ended) return emptyList()
+        val layer = dmsdp ?: return emptyList()
+        return session { out -> handleDmsdp(call(SessionLayer.DMSDP) { layer.sendDeviceData(module, type, data) }, out) }
+    }
+
     // ---------------- nearby ----------------
 
     private fun handleNearby(outputs: List<NearbyOutput>, out: Out) {
@@ -600,6 +606,7 @@ class ReceiverSession internal constructor(
                 is DmsdpEvent.EncryptionEnabled -> out.add(SessionEvent.DeviceSessionReady(o.keepAliveMode))
                 is DmsdpEvent.KeepAliveTimeout -> finish(EndReason.KeepAliveTimeout(o.mode), out)
                 is DmsdpEvent.DisplayPortAnnounced -> beginHiSight(o.port, out)
+                is DmsdpEvent.UnhandledDeviceData -> out.add(SessionEvent.DeviceData(o.module, o.type, o.data))
                 is DmsdpEvent.ServiceStatusChanged -> {
                     diag(SessionLayer.DMSDP, o.toString(), out)
                     if (o.action == SERVICE_ACTION_PAUSE && o.serviceType == SERVICE_TYPE_DISPLAY) {

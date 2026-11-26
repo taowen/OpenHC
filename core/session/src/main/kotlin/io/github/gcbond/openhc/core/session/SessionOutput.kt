@@ -206,6 +206,10 @@ sealed class SessionEvent : SessionOutput {
         override fun toString() = "ProjectionPaused"
     }
 
+    class DeviceData(val module: Long, val type: Int, val data: ByteArray) : SessionEvent() {
+        override fun toString() = "DeviceData(module=$module, type=$type, size=${data.size})"
+    }
+
     /** 不影响会话继续的信息：各层没处理的消息、被丢弃的数据、被忽略的请求等。[message] 可以直接写日志。 */
     class Diagnostic(val layer: SessionLayer, val message: String) : SessionEvent() {
         override fun toString() = "Diagnostic($layer: $message)"

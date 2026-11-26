@@ -95,6 +95,7 @@ internal interface DmsdpLayer {
 
     /** 把车机这边的音频焦点变化告诉手机。 */
     fun sendAudioFocus(change: CarAudioFocus): List<DmsdpOutput> = emptyList()
+    fun sendDeviceData(module: Long, type: Int, data: ByteArray): List<DmsdpOutput> = emptyList()
 }
 
 internal interface HiSightLayer {
@@ -151,6 +152,8 @@ internal class ProductionLayers(
             override fun sendMicAudio(data: ByteArray, offset: Int, length: Int, nowMillis: Long) =
                 session.sendMicAudio(data, offset, length, nowMillis)
             override fun sendAudioFocus(change: CarAudioFocus) = session.sendAudioFocus(change)
+            override fun sendDeviceData(module: Long, type: Int, data: ByteArray) =
+                session.sendDeviceData(module, type, data)
         }
     }
 
